@@ -1,16 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torchtext.datasets import Multi30k
-from torchtext.data import Field, BucketIterator
+from torchtext.legacy.datasets import Multi30k
+from torchtext.legacy.data import Field, BucketIterator
 import numpy as np
 import spacy
 import random
 from torch.utils.tensorboard import SummaryWriter  # to print to tensorboard
 from utils import translate_sentence, bleu, save_checkpoint, load_checkpoint
 
-spacy_ger = spacy.load("de")
-spacy_eng = spacy.load("en")
+spacy_ger = spacy.load("de_core_news_sm")
+spacy_eng = spacy.load("en_core_web_sm")
 
 
 def tokenize_ger(text):
