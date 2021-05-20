@@ -4,17 +4,17 @@ from torchtext.vocab import Vocab
 from torch import Tensor
 import io
 
-def build_vocab(filepath, tokenizer):
+def build_vocab(filepath, tokenizer, min_freq=1):
     counter = Counter()
     with io.open(filepath, encoding="utf8") as f:
         for string_ in f:
             counter.update(tokenizer(string_))
-    return Vocab(counter, specials=['<unk>', '<pad>', '<bos>', '<eos>'])
+
+    return Vocab(counter, min_freq=min_freq, specials=['<unk>', '<pad>', '<bos>', '<eos>'])
 
 def generate_square_subsequent_mask(sz, device="cuda"):
     mask = (torch.triu(torch.ones((sz, sz), device=device)) == 1).transpose(0, 1)
-    mask = mask.float().masked_fill(mask == 0,
-                                    float('-inf')).masked_fill(mask == 1, float(0.0))
+    mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
     return mask
 
 def create_mask(src, tgt, PAD_IDX, device="cuda"):
@@ -28,6 +28,7 @@ def create_mask(src, tgt, PAD_IDX, device="cuda"):
     tgt_padding_mask = (tgt == PAD_IDX).transpose(0, 1)
     return src_mask, tgt_mask, src_padding_mask, tgt_padding_mask
 
+
 def greedy_decode(model, src, src_mask, max_len, start_symbol, end_symbol, device="cuda"):
     src = src.to(device)
     src_mask = src_mask.to(device)
@@ -36,10 +37,8 @@ def greedy_decode(model, src, src_mask, max_len, start_symbol, end_symbol, devic
     ys = torch.ones(1, 1).fill_(start_symbol).type(torch.long).to(device)
     for i in range(max_len - 1):
         memory = memory.to(device)
-        memory_mask = torch.zeros(ys.shape[0],
-                                  memory.shape[0]).to(device).type(torch.bool)
-        tgt_mask = (generate_square_subsequent_mask(ys.size(0), device).type(
-            torch.bool)).to(device)
+        memory_mask = torch.zeros(ys.shape[0], memory.shape[0]).to(device).type(torch.bool)
+        tgt_mask = (generate_square_subsequent_mask(ys.size(0), device).type(torch.bool)).to(device)
         out = model.decode(ys, memory, tgt_mask)
         out = out.transpose(0, 1)
         prob = model.generator(out[:, -1])
@@ -49,6 +48,7 @@ def greedy_decode(model, src, src_mask, max_len, start_symbol, end_symbol, devic
         ys = torch.cat([ys, torch.ones(1, 1).type_as(src.data).fill_(next_word)], dim=0)
         if next_word == end_symbol:
             break
+
     return ys
 
 
@@ -65,5 +65,4 @@ def translate(model, src, src_vocab, tgt_vocab, src_tokenizer, BOS_IDX, EOS_IDX,
                                start_symbol=BOS_IDX,
                                end_symbol=EOS_IDX,
                                device=device).flatten()
-    return " ".join([tgt_vocab.itos[tok]
-                     for tok in tgt_tokens]).replace("<bos>", "").replace("<eos>", "")
+    return " ".join([tgt_vocab.itos[tok] for tok in tgt_tokens]).replace("<bos>", "").replace("<eos>", "")
