@@ -1,1 +1,1 @@
-# nmt-de-en-fairseq-multi30k
+# nmt-de-en-multi30k
