@@ -4,26 +4,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import Counter
 from torchtext.vocab import Vocab
+from torch.nn.utils import clip_grad_norm_
 from torch.nn.utils.rnn import pad_sequence
 
 def train(model, train_iter, optimizer, loss_fn, device):
     # global steps
     model.train()
     losses = 0
-    for _, (src, tgt) in enumerate(train_iter):
+    for (src, tgt) in train_iter:
         src = src.to(device)
         tgt = tgt.to(device)
 
         tgt_input = tgt[:-1, :]
         logits = model(src, tgt_input)
+        tgt_out = tgt[1:, :]
 
         optimizer.zero_grad()
-
-        tgt_out = tgt[1:, :]
         
         loss = loss_fn(logits.reshape(-1, logits.shape[-1]), tgt_out.reshape(-1))
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1)
+
+        clip_grad_norm_(model.parameters(), max_norm=1)
         
         optimizer.step()
         # steps += 1
@@ -36,7 +37,7 @@ def train(model, train_iter, optimizer, loss_fn, device):
 def evaluate(model, val_iter, loss_fn, device):
     model.eval()
     losses = 0
-    for _, (src, tgt) in (enumerate(val_iter)):
+    for (src, tgt) in val_iter:
         src = src.to(device)
         tgt = tgt.to(device)
 
@@ -63,9 +64,9 @@ def data_process(filepaths, src_vocab, tgt_vocab, src_tokenizer, tgt_tokenizer):
     raw_en_iter = iter(open(filepaths[1], encoding="utf8"))
     data = []
     for (raw_de, raw_en) in zip(raw_de_iter, raw_en_iter):
-        de_tensor_ = torch.tensor([src_vocab[token] for token in src_tokenizer(raw_de.lower().rstrip("\n"))], dtype=torch.long)
-        en_tensor_ = torch.tensor([tgt_vocab[token] for token in tgt_tokenizer(raw_en.lower().rstrip("\n"))], dtype=torch.long)
-        data.append((de_tensor_, en_tensor_))
+        de_tensor = torch.tensor([src_vocab[token] for token in src_tokenizer(raw_de.lower().rstrip("\n"))], dtype=torch.long)
+        en_tensor = torch.tensor([tgt_vocab[token] for token in tgt_tokenizer(raw_en.lower().rstrip("\n"))], dtype=torch.long)
+        data.append((de_tensor, en_tensor))
 
     return data
 

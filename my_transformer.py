@@ -94,12 +94,7 @@ class MyTfEncoder(nn.Module):
         self.norm = norm
 
     def forward(self, src , mask=None, src_key_padding_mask=None):
-        """
-        Args:
-            src: the sequence to the encoder (required).
-            mask: the mask for the src sequence (optional).
-            src_key_padding_mask: the mask for the src keys per batch (optional).
-        """
+
         output = src
 
         for mod in self.layers:
@@ -120,15 +115,7 @@ class MyTfDecoder(nn.Module):
 
     def forward(self, tgt, memory, tgt_mask=None, memory_mask=None, tgt_key_padding_mask=None,
                 memory_key_padding_mask=None):
-        """
-        Args:
-            tgt: the sequence to the decoder (required).
-            memory: the sequence from the last layer of the encoder (required).
-            tgt_mask: the mask for the tgt sequence (optional).
-            memory_mask: the mask for the memory sequence (optional).
-            tgt_key_padding_mask: the mask for the tgt keys per batch (optional).
-            memory_key_padding_mask: the mask for the memory keys per batch (optional).
-        """
+
         output = tgt
 
         for mod in self.layers:
@@ -160,12 +147,7 @@ class MyTfEncoderLayer(nn.Module):
         self.activation = get_activation_fn(activation)
 
     def forward(self, src, src_mask=None, src_key_padding_mask=None):
-        """
-        Args:
-            src: the sequence to the encoder layer (required).
-            src_mask: the mask for the src sequence (optional).
-            src_key_padding_mask: the mask for the src keys per batch (optional).
-        """
+
         src2 = self.self_attn(src, src, src, attn_mask=src_mask,
                               key_padding_mask=src_key_padding_mask)[0]
         src = src + self.dropout1(src2)
@@ -173,6 +155,7 @@ class MyTfEncoderLayer(nn.Module):
         src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
         src = src + self.dropout2(src2)
         src = self.norm2(src)
+
         return src
 
 
@@ -198,15 +181,7 @@ class MyTfDecoderLayer(nn.Module):
 
     def forward(self, tgt, memory, tgt_mask=None, memory_mask=None,
                 tgt_key_padding_mask=None, memory_key_padding_mask=None):
-        """
-        Args:
-            tgt: the sequence to the decoder layer (required).
-            memory: the sequence from the last layer of the encoder (required).
-            tgt_mask: the mask for the tgt sequence (optional).
-            memory_mask: the mask for the memory sequence (optional).
-            tgt_key_padding_mask: the mask for the tgt keys per batch (optional).
-            memory_key_padding_mask: the mask for the memory keys per batch (optional).
-        """
+
         tgt2 = self.self_attn(tgt, tgt, tgt, attn_mask=tgt_mask,
                               key_padding_mask=tgt_key_padding_mask)[0]
         tgt = tgt + self.dropout1(tgt2)
@@ -218,6 +193,7 @@ class MyTfDecoderLayer(nn.Module):
         tgt2 = self.linear2(self.dropout(self.activation(self.linear1(tgt))))
         tgt = tgt + self.dropout3(tgt2)
         tgt = self.norm3(tgt)
+
         return tgt
     
 class PositionalEncoding(nn.Module):
@@ -240,7 +216,6 @@ class PositionalEncoding(nn.Module):
     
 class PositionalEmbedding(nn.Module):
     '''learnable pos encoding'''
-
     def __init__(self, emb_size, dropout, maxlen=100):
         super(PositionalEmbedding, self).__init__()
         self.pos_embedding = nn.Embedding(maxlen, emb_size)
