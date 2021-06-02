@@ -89,7 +89,7 @@ class MyTfEncoder(nn.Module):
 
     def __init__(self, encoder_layer, num_layers, norm=None):
         super(MyTfEncoder, self).__init__()
-        
+
         self.layers = nn.ModuleList([copy.deepcopy(encoder_layer) for i in range(num_layers)])
         self.num_layers = num_layers
         self.norm = norm
@@ -110,7 +110,8 @@ class MyTfDecoder(nn.Module):
 
     def __init__(self, decoder_layer, num_layers, norm=None):
         super(MyTfDecoder, self).__init__()
-        self.layers = get_clones(decoder_layer, num_layers)
+
+        self.layers = nn.ModuleList([copy.deepcopy(decoder_layer) for i in range(num_layers)])
         self.num_layers = num_layers
         self.norm = norm
 
@@ -183,7 +184,12 @@ class MyTfDecoderLayer(nn.Module):
         self.dropout2 = nn.Dropout(dropout)
         self.dropout3 = nn.Dropout(dropout)
 
-        self.activation = get_activation_fn(activation)
+        if activation=='relu':
+            self.activation = nn.ReLU()
+        elif activation=='gelu':
+            self.activation = nn.GELU()
+        else:
+            raise RuntimeError("activation should be relu/gelu, not {}".format(activation))
 
     def forward(self, tgt, memory, tgt_mask=None, memory_mask=None,
                 tgt_key_padding_mask=None, memory_key_padding_mask=None):
