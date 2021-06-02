@@ -1,7 +1,5 @@
 import copy
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from collections import Counter
 from torchtext.vocab import Vocab
 from torch.nn.utils import clip_grad_norm_
