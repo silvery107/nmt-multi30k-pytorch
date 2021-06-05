@@ -56,7 +56,7 @@ def build_vocab(vocab_pth, tokenizer, min_freq=1):
 
     return Vocab(count, min_freq=min_freq, specials=['<unk>', '<pad>', '<bos>', '<eos>'])
     
-def data_process(filepaths, src_vocab, tgt_vocab, src_tokenizer, tgt_tokenizer):
+def sen2tensor(filepaths, src_vocab, tgt_vocab, src_tokenizer, tgt_tokenizer):
     raw_de_iter = iter(open(filepaths[0], encoding="utf8"))
     raw_en_iter = iter(open(filepaths[1], encoding="utf8"))
     data = []
@@ -68,7 +68,7 @@ def data_process(filepaths, src_vocab, tgt_vocab, src_tokenizer, tgt_tokenizer):
     return data
 
 def get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX):
-    def generate_batch(data_batch):
+    def batchtify(data_batch):
         de_batch, en_batch = [], []
         for (de_item, en_item) in data_batch:
             de_batch.append(torch.cat([torch.tensor([BOS_IDX]), de_item, torch.tensor([EOS_IDX])], dim=0))
@@ -76,7 +76,7 @@ def get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX):
         de_batch = pad_sequence(de_batch, padding_value=PAD_IDX)
         en_batch = pad_sequence(en_batch, padding_value=PAD_IDX)
         return de_batch, en_batch
-    return generate_batch
+    return batchtify
 
 def count_parameters(model):
     params = 0
@@ -94,12 +94,10 @@ def generate_square_subsequent_mask(sz, device="cuda"):
 def greedy_decode(model, src, src_mask, max_len, start_symbol, end_symbol, device="cuda"):
     src = src.to(device)
     src_mask = src_mask.to(device)
-
     memory = model.encode(src, src_mask)
     ys = torch.ones(1, 1).fill_(start_symbol).type(torch.long).to(device)
     for _ in range(max_len - 1):
         memory = memory.to(device)
-        # memory_mask = torch.zeros(ys.shape[0], memory.shape[0]).to(device).type(torch.bool)
         tgt_mask = (generate_square_subsequent_mask(ys.size(0), device).type(torch.bool)).to(device)
         out = model.decode(ys, memory, tgt_mask)
         out = out.transpose(0, 1)
