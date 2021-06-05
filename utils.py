@@ -1,4 +1,3 @@
-import copy
 import torch
 from collections import Counter
 from torchtext.vocab import Vocab
