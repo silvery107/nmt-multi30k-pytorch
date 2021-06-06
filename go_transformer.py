@@ -4,10 +4,9 @@ from torch.utils.data import DataLoader
 from torchtext.data.utils import get_tokenizer
 from torch.optim.lr_scheduler import StepLR,LambdaLR
 
-import matplotlib.pyplot as plt
 import numpy as np
-from utils import *
-from my_transformer import *
+from src.utils import *
+from src.my_transformer import *
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -23,7 +22,7 @@ parser.add_argument("--lr", type=float, default=0.0001, help="learning rate")
 
 args = parser.parse_args()
 
-model_name = "../models/transformer-6-5-1"
+model_name = "./models/transformer-6-5-1"
 BATCH_SIZE = args.batch
 NUM_ENCODER_LAYERS = args.num_enc # no help, 3 is better
 NUM_DECODER_LAYERS = args.num_dec # no help, 3 is better
@@ -33,6 +32,7 @@ NHEAD = args.head # no help, hard converge
 DROPOUT = args.dropout
 NUM_EPOCHS = args.epoch
 LEARNING_RATE = args.lr
+POS_LN = False
 # LR_STEP = 30
 # warmup_steps = 4000
 
@@ -43,7 +43,7 @@ torch.cuda.manual_seed(SEED)
 torch.backends.cudnn.deterministic = True
 # torch.use_deterministic_algorithms(True)
 
-pth_base = "./.data/multi30k/task1/raw/"
+pth_base = "./src/.data/multi30k/task1/raw/"
 train_pths = ('train.de', 'train.en')
 val_pths = ('val.de', 'val.en')
 test_pths = ('test_2016_flickr.de', 'test_2016_flickr.en')
@@ -62,6 +62,7 @@ train_data = sen2tensor(train_filepaths, de_vocab, en_vocab, de_tokenizer, en_to
 val_data = sen2tensor(val_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
 test_data = sen2tensor(test_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = device
 
 SRC_VOCAB_SIZE = len(de_vocab)
 TGT_VOCAB_SIZE = len(en_vocab)
@@ -76,7 +77,7 @@ test_iter = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=True, collate_f
 
 transformer = MyTf(NUM_ENCODER_LAYERS, NUM_DECODER_LAYERS, 
                    EMB_SIZE, NHEAD, SRC_VOCAB_SIZE, TGT_VOCAB_SIZE, PAD_IDX,
-                   FFN_HID_DIM, DROPOUT)
+                   FFN_HID_DIM, DROPOUT, POS_LN, DEVICE)
 
 transformer = transformer.to(device)
 

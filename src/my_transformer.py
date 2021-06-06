@@ -2,7 +2,7 @@ import math
 import copy
 import torch
 import torch.nn as nn
-from utils import *
+from src.utils import *
 
 class MyTf(nn.Module):
     pos_learnable = False

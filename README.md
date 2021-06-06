@@ -59,7 +59,11 @@ project
 
 4. Start training
 
-    `python ./src/go_transformer.py`
+    `python go_transformer.py`
+
+    or
+
+    `sh train.sh`
 
 ## Parameters Configurations
 ```

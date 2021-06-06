@@ -86,12 +86,12 @@ def count_parameters(model):
 
     return params
 
-def generate_square_subsequent_mask(sz, device="cuda"):
+def generate_square_subsequent_mask(sz, device):
     mask = (torch.triu(torch.ones((sz, sz), device=device)) == 1).transpose(0, 1)
     mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
     return mask
 
-def greedy_decode(model, src, src_mask, max_len, start_symbol, end_symbol, device="cuda"):
+def greedy_decode(model, src, src_mask, max_len, start_symbol, end_symbol, device):
     src = src.to(device)
     src_mask = src_mask.to(device)
     memory = model.encode(src, src_mask)
