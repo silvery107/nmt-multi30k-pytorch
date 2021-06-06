@@ -3,6 +3,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchtext.data.utils import get_tokenizer
 from torch.optim.lr_scheduler import StepLR,LambdaLR
+import matplotlib.pyplot as plt
 
 import numpy as np
 from src.utils import *
@@ -22,7 +23,7 @@ parser.add_argument("--lr", type=float, default=0.0001, help="learning rate")
 
 args = parser.parse_args()
 
-model_name = "./models/transformer-6-5-1"
+model_name = "./models/transformer-6-5-2"
 BATCH_SIZE = args.batch
 NUM_ENCODER_LAYERS = args.num_enc # no help, 3 is better
 NUM_DECODER_LAYERS = args.num_dec # no help, 3 is better
@@ -56,8 +57,8 @@ if __name__=="__main__":
     de_tokenizer = get_tokenizer('spacy', language='de_core_news_sm')
     en_tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
 
-    de_vocab = build_vocab(train_filepaths[0], de_tokenizer, min_freq=3)
-    en_vocab = build_vocab(train_filepaths[1], en_tokenizer, min_freq=3)
+    de_vocab = build_vocab(train_filepaths[0], de_tokenizer, min_freq=4)
+    en_vocab = build_vocab(train_filepaths[1], en_tokenizer, min_freq=4)
 
     train_data = sen2tensor(train_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
     val_data = sen2tensor(val_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
@@ -65,6 +66,13 @@ if __name__=="__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     DEVICE = device
 
+    print(device)
+    print("train size:", len(train_data))
+    print("val size:", len(val_data))
+    print("test size:", len(test_data))
+    print("de vocab size:", len(de_vocab))
+    print("en vocab size:", len(en_vocab))
+    
     SRC_VOCAB_SIZE = len(de_vocab)
     TGT_VOCAB_SIZE = len(en_vocab)
 
@@ -104,7 +112,7 @@ if __name__=="__main__":
             transformer.eval()
             torch.save(transformer, model_name+"-best.pth.tar")
             
-        if epoch % 30 == 0:
+        if epoch % 20 == 0:
             transformer.eval()
             torch.save(transformer, model_name+"-ckpt-"+str(epoch)+".pth.tar")
             
@@ -112,6 +120,14 @@ if __name__=="__main__":
         val_loss_curve.append(val_loss)
 
         print((f"Epoch: {epoch}, Train loss: {train_loss:.3f}, Val loss: {val_loss:.3f}, Epoch time = {(end_time - start_time):.3f}s"))
-
+    
+    print("min val loss:",min_val_loss)
+    plt.plot(train_loss_curve)
+    plt.plot(val_loss_curve)
+    plt.grid()
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.legend(("train loss","val loss"))
+    plt.savefig("./images/" + model_name.split(sep="/")[-1] + ".png")
     transformer.eval()
     torch.save(transformer, model_name + ".pth.tar")
