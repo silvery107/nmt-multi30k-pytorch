@@ -48,12 +48,15 @@ project
 1. Check out this repository and download our source code
 
 `git clone git@github.com:silvery107/nmt-multi30k-pytorch.git`
+
 2. Create virtual environment
 
 `conda env create -f environment.yaml`
+
 3. Install the required python modules
 
 `pip install -r requirements.txt`
+
 4. Start training
 
 `python ./src/go_transformer.py`
