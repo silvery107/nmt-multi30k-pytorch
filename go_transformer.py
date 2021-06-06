@@ -16,7 +16,7 @@ parser.add_argument("--num-dec", type=int, default=3, help="decoder layers numbe
 parser.add_argument("--emb-dim", type=int, default=256, help="embedding dimension")
 parser.add_argument("--ffn-dim", type=int, default=512, help="feedforward network dimension")
 parser.add_argument("--head", type=int, default=8, help="head numbers of multihead attention layer")
-parser.add_argument("--dropout", type=float, default=0.3, help="dropout rate")
+parser.add_argument("--dropout", type=float, default=0.1, help="dropout rate")
 parser.add_argument("--epoch", type=int, default=40, help="training epoch numbers")
 parser.add_argument("--lr", type=float, default=0.0001, help="learning rate")
 
@@ -44,7 +44,7 @@ if __name__=="__main__":
     torch.backends.cudnn.deterministic = True
     # torch.use_deterministic_algorithms(True)
 
-    pth_base = "./src/.data/multi30k/task1/raw/"
+    pth_base = "./.data/multi30k/task1/raw/"
     train_pths = ('train.de', 'train.en')
     val_pths = ('val.de', 'val.en')
     test_pths = ('test_2016_flickr.de', 'test_2016_flickr.en')
@@ -56,8 +56,8 @@ if __name__=="__main__":
     de_tokenizer = get_tokenizer('spacy', language='de_core_news_sm')
     en_tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
 
-    de_vocab = build_vocab(train_filepaths[0], de_tokenizer, min_freq=1)
-    en_vocab = build_vocab(train_filepaths[1], en_tokenizer, min_freq=1)
+    de_vocab = build_vocab(train_filepaths[0], de_tokenizer, min_freq=3)
+    en_vocab = build_vocab(train_filepaths[1], en_tokenizer, min_freq=3)
 
     train_data = sen2tensor(train_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
     val_data = sen2tensor(val_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
@@ -72,9 +72,9 @@ if __name__=="__main__":
     BOS_IDX = de_vocab['<bos>']
     EOS_IDX = de_vocab['<eos>']
 
-    train_iter = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True, collate_fn=get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX))
-    valid_iter = DataLoader(val_data, batch_size=BATCH_SIZE, shuffle=True, collate_fn=get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX))
-    test_iter = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=True, collate_fn=get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX))
+    train_iter = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True, collate_fn=get_batchtify(PAD_IDX,BOS_IDX,EOS_IDX))
+    valid_iter = DataLoader(val_data, batch_size=BATCH_SIZE, shuffle=True, collate_fn=get_batchtify(PAD_IDX,BOS_IDX,EOS_IDX))
+    test_iter = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=True, collate_fn=get_batchtify(PAD_IDX,BOS_IDX,EOS_IDX))
 
     transformer = MyTf(NUM_ENCODER_LAYERS, NUM_DECODER_LAYERS, 
                     EMB_SIZE, NHEAD, SRC_VOCAB_SIZE, TGT_VOCAB_SIZE, PAD_IDX,

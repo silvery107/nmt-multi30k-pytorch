@@ -68,7 +68,7 @@ def sen2tensor(filepaths, src_vocab, tgt_vocab, src_tokenizer, tgt_tokenizer):
 
     return data
 
-def get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX):
+def get_batchtify(PAD_IDX,BOS_IDX,EOS_IDX):
     def batchtify(data_batch):
         de_batch, en_batch = [], []
         for (de_item, en_item) in data_batch:
