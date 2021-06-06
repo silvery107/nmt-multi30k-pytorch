@@ -29,6 +29,7 @@ def train(model, train_iter, optimizer, loss_fn, device):
 #             param_group['lr'] = lrate(steps)
             
         losses += loss.item()
+        
     return losses / len(train_iter)
 
 def evaluate(model, val_iter, loss_fn, device):
@@ -76,6 +77,7 @@ def get_collate_fn(PAD_IDX,BOS_IDX,EOS_IDX):
         de_batch = pad_sequence(de_batch, padding_value=PAD_IDX)
         en_batch = pad_sequence(en_batch, padding_value=PAD_IDX)
         return de_batch, en_batch
+
     return batchtify
 
 def count_parameters(model):
