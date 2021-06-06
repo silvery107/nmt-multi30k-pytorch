@@ -2,11 +2,18 @@
 
 
 ## Virtual Environment Setup
-Run `conda env create -f environment.yaml`
+1. Check required environment
+   `environment.yaml`
+
+2. Create virtual environment
+   `conda env create -f environment.yaml`
 
 ## Dependency Requirements 
-Check `requirements.txt`
+1. Check required packages
+`requirements.txt`
 
+2. Install required packages
+`pip install -r requirements.txt`
 ## Folder Structure
 ```
 project
@@ -40,28 +47,30 @@ project
 ## Quick Start
 1. Check out this repository and download our source code
 `git clone git@github.com:silvery107/nmt-multi30k-pytorch.git`
-2. Install the required python modules
+2. Create virtual environment
+`conda env create -f environment.yaml`
+3. Install the required python modules
 `pip install -r requirements.txt`
-3. Run
-`python ./src/translation_final.py`
+4. Start training
+`python ./src/go_transformer.py`
 
 ## Parameters Configurations
 ```
-usage: 
-        python go_transformer
-        [--batch 128] [--num-enc 3] [--num-dec 3] 
-        [--emb-dim 256] [--ffn-dim 512] [--head 8] 
-        [--dropout 0.3] [--epoch 40] [--lr 0.0001] 
+usage:  python go_transformer.py [-h]
+        [--batch BATCH] [--num-enc NUM_ENC] [--num-dec NUM_DEC] 
+        [--emb-dim EMB_DIM] [--ffn-dim FFN_DIM] [--head HEAD]
+        [--dropout DROPOUT] [--epoch EPOCH] [--lr LR] 
 ```
 
 | Argument | Description |
 |-|-|
-| --batch | Batch size |
-| --num-enc | Encoder layers numbers |
-| --num-dec | Decoder layers numbers |
-| --emb-dim | Embedding dimension |
-| --ffn-dim | Feedforward network dimension |
-| --head | Head numbers of multihead attention layer |
-| --dropout | Dropout rate |
-| --epoch | Training epoch numbers |
-| --lr | Learning rate |
+|-h, --help|show help message and exit|
+| --batch | batch size |
+| --num-enc | encoder layers numbers |
+| --num-dec | decoder layers numbers |
+| --emb-dim | embedding dimension |
+| --ffn-dim | feedforward network dimension |
+| --head | head numbers of multihead attention layer |
+| --dropout | dropout rate |
+| --epoch | training epoch numbers |
+| --lr | learning rate |
