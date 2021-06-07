@@ -1,4 +1,4 @@
-# Neural Machine Translation from German to English with Transformer on Multi30K Dataset
+# <center>Neural Machine Translation from German to English with Transformer on Multi30K Dataset</center>
 
 
 ## Virtual Environment Setup
