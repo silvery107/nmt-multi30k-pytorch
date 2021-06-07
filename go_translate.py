@@ -16,6 +16,8 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed(SEED)
 torch.backends.cudnn.deterministic = True
 model_pth = "./models/"
+if not os.path.exists(model_pth):
+    os.mkdir(model_pth)
 model_name = args.model
 model = torch.load(model_pth + model_name + ".pth.tar")
 model.eval()
