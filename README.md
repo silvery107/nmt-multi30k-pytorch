@@ -73,7 +73,7 @@ project
 usage:  python go_transformer.py [-h]
         [--batch BATCH] [--num-enc NUM_ENC] [--num-dec NUM_DEC] 
         [--emb-dim EMB_DIM] [--ffn-dim FFN_DIM] [--head HEAD]
-        [--dropout DROPOUT] [--epoch EPOCH] [--lr LR] 
+        [--dropout DROPOUT] [--epoch EPOCH] [--lr LR] [--fre FRE]
 ```
 
 | Argument | Description |
@@ -88,6 +88,7 @@ usage:  python go_transformer.py [-h]
 | --dropout | dropout rate |
 | --epoch | training epoch numbers |
 | --lr | learning rate |
+| --fre | min frequencies of words in vocabulary |
 
 ```
 usage:  python go_translate.py [-h]
