@@ -58,8 +58,6 @@ def beam_search(model, src, src_mask, max_len, start_symbol, end_symbol, dot, de
             next_k_prob, next_k_word = torch.topk(prob, beam_k, dim=1)
             # get k ans
             for p, word in zip(next_k_prob[0],next_k_word[0]):
-                if word==0. or word==1. or word==2. or word==3.:
-                    p = torch.ones(1, 1,device=word.device).fill_(0)
                 temp = torch.cat([p.view(1,1,-1),word.view(1,1,-1)],dim=0) # (2,1,len)
                 answers.append(temp) # 0: prob, 1: seq   (k,2,1,len)
         else:
@@ -76,18 +74,17 @@ def beam_search(model, src, src_mask, max_len, start_symbol, end_symbol, dot, de
                 next_k_prob, next_k_word = torch.topk(prob, beam_k, dim=1)
                 # gen k new ans
                 for p, word in zip(next_k_prob[0],next_k_word[0]):
-                    if word==0. or word==1. or word==2. or word==3.:
-                        p = torch.ones(1, 1,device=word.device).fill_(0)
                     temp = torch.cat([p.view(1,1,-1),word.view(1,1,-1)],dim=0) # (2,1,1)
                     answers.append(torch.cat([ans, temp],dim=2)) # (2,1,len) + (2,1,1)
 
-        beam_score = torch.tensor([torch.sum(torch.tensor([p for p in ans[0, 0]])) for ans in answers])
+        beam_score = torch.tensor([torch.sum(torch.tensor([p for p in ans[0, 0]]))/len(ans[0,0]) for ans in answers])
         _, top_k_idx = torch.topk(beam_score, beam_k, dim=0)
         answers = [answers[i] for i in top_k_idx]
+
         if all([ans[1, 0, -1]==end_symbol or ans[1,0,-1]==dot or len(ans[1, 0])>max_len for ans in answers]):
             break
     
-    beam_score = torch.tensor([torch.sum(torch.tensor([p for p in ans[0, 0]])) for ans in answers])
+    beam_score = torch.tensor([torch.sum(torch.tensor([p for p in ans[0, 0]]))/len(ans[0,0]) for ans in answers])
     best_answer = answers[torch.argmax(beam_score)] # best answer tokens
 
     return best_answer[1,0].type_as(src.data)
@@ -141,4 +138,4 @@ def translate(model, src, src_vocab, tgt_vocab, src_tokenizer, BOS_IDX, EOS_IDX,
 # "Ein Boston Terrier läuft über saftig-grünes Gras vor einem weißen Zaun."
 # "eine gruppe von menschen steht vor einem iglu ."
 
-print(translate(model, "ein Boston Terrier läuft über saftig-grünes Gras vor einem weißen zaun.".lower(), de_vocab, en_vocab, de_tokenizer, BOS_IDX, EOS_IDX, "beam", device))
+print(translate(model, "ein boston terrier läuft über saftig-grünes gras vor einem weißen zaun.".lower(), de_vocab, en_vocab, de_tokenizer, BOS_IDX, EOS_IDX, "beam", device))

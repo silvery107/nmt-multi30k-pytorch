@@ -1,4 +1,4 @@
-# README
+# Neural Machine Translation from German to English with Transformer on Multi30K Dataset
 
 
 ## Virtual Environment Setup
@@ -17,32 +17,32 @@
 ## Folder Structure
 ```
 project
+├── .data
+|   └── ...
+├── docs
+|   └── ...
 ├── images
 |   └── ...
 ├── models
 |   └── ...
 ├── src
-|   ├── .data
-|   |   └── ...
 │   ├── __init__.py
-│   ├── BLEU_Evaluation.ipynb
-│   ├── translation_final.ipynb
 │   ├── multi-bleu.perl
 │   ├── my_transformer.py
-│   ├── translation_final.py
-│   ├── utils.py
-│   ├── predictions.txt
-│   └── reference.txt
+│   └── utils.py
 ├── tools
 |   └── tuning.xlsx
 ├── tutorial_aladdinpersson
 |   └── ...
 ├── tutorial_bentrevett
 |   └── ...
-├── LICENSE
+├── go_transformer.py
+├── go_translate.py
+├── trasn.sh
 ├── README.md
 ├── environment.yaml
-└── requirements.txt
+├── requirements.txt
+└── ...
 ```
 ## Quick Start
 1. Check out this repository and download our source code
@@ -64,6 +64,9 @@ project
     or
 
     `sh train.sh`
+5. Evaluate model with BLEU score
+
+    `python go_translate.py --model MODEL_NAME --fre FRE`
 
 ## Parameters Configurations
 ```
@@ -85,3 +88,15 @@ usage:  python go_transformer.py [-h]
 | --dropout | dropout rate |
 | --epoch | training epoch numbers |
 | --lr | learning rate |
+
+```
+usage:  python go_translate.py [-h]
+        [--model MODEL] [--fre FRE] [--mode MODE] 
+```
+
+| Argument | Description |
+|-|-|
+|-h, --help|show help message and exit|
+| --model | model name |
+| --fre | min frequencies of words in vocabulary |
+| --mode | greedy search or beam search |

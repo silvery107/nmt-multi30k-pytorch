@@ -20,6 +20,7 @@ parser.add_argument("--head", type=int, default=8, help="head numbers of multihe
 parser.add_argument("--dropout", type=float, default=0.1, help="dropout rate")
 parser.add_argument("--epoch", type=int, default=40, help="training epoch numbers")
 parser.add_argument("--lr", type=float, default=0.0001, help="learning rate")
+parser.add_argument("--fre", type=int, default=3, help="min frequencies of words in vocabulary")
 
 args = parser.parse_args()
 
@@ -57,8 +58,8 @@ if __name__=="__main__":
     de_tokenizer = get_tokenizer('spacy', language='de_core_news_sm')
     en_tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
 
-    de_vocab = build_vocab(train_filepaths[0], de_tokenizer, min_freq=4)
-    en_vocab = build_vocab(train_filepaths[1], en_tokenizer, min_freq=4)
+    de_vocab = build_vocab(train_filepaths[0], de_tokenizer, min_freq=args.fre)
+    en_vocab = build_vocab(train_filepaths[1], en_tokenizer, min_freq=args.fre)
 
     train_data = sen2tensor(train_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
     val_data = sen2tensor(val_filepaths, de_vocab, en_vocab, de_tokenizer, en_tokenizer)
@@ -72,7 +73,7 @@ if __name__=="__main__":
     print("test size:", len(test_data))
     print("de vocab size:", len(de_vocab))
     print("en vocab size:", len(en_vocab))
-    
+
     SRC_VOCAB_SIZE = len(de_vocab)
     TGT_VOCAB_SIZE = len(en_vocab)
 
