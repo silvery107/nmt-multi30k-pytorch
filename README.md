@@ -18,14 +18,6 @@
 ## Folder Structure
 ```
 project
-├── .data
-|   └── ...
-├── docs
-|   └── ...
-├── images
-|   └── ...
-├── models
-|   └── ...
 ├── src
 │   ├── __init__.py
 │   ├── multi-bleu.perl
@@ -33,10 +25,6 @@ project
 │   └── utils.py
 ├── tools
 |   └── tuning.xlsx
-├── tutorial_aladdinpersson
-|   └── ...
-├── tutorial_bentrevett
-|   └── ...
 ├── go_transformer.py
 ├── go_translate.py
 ├── trasn.sh
