@@ -24,7 +24,7 @@ project
 │   ├── my_transformer.py
 │   └── utils.py
 ├── tools
-|   └── tuning.xlsx
+│   └── tuning.xlsx
 ├── go_transformer.py
 ├── go_translate.py
 ├── trasn.sh
