@@ -1,6 +1,8 @@
 # Neural Machine Translation from German to English with Transformer on Multi30K Dataset
  In this work, we implemented a ***Transformer*** architecture to realize a full attention neural network that learns to translate ***German*** to ***English***. The best model gains a ***BLEU*** score up to ***37.39***, when the minimum frequency of words is selected to be 3.
 
+<img src=images/tuning.jpg width=300>
+
 ## Virtual Environment Setup
 1. Check required environment
    `environment.yaml`
@@ -24,7 +26,7 @@ project
 │   ├── my_transformer.py
 │   └── utils.py
 ├── tools
-|   └── tuning.xlsx
+│   └── tuning.xlsx
 ├── go_transformer.py
 ├── go_translate.py
 ├── trasn.sh
