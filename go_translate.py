@@ -67,6 +67,7 @@ with open("predictions.txt",'w+') as f:
     f.writelines(predictions)
 
 os.system("perl ./src/multi-bleu.perl -lc reference.txt < predictions.txt")
+# BLEU = 37.28, 71.3/47.0/32.0/22.4 (BP=0.947, ratio=0.948, hyp_len=12382, ref_len=13058)
 
 '''record predictions'''
 with open(model_pth + model_name + ".txt",'w+') as f:    
