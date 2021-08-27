@@ -89,6 +89,7 @@ if __name__=="__main__":
                     EMB_SIZE, NHEAD, SRC_VOCAB_SIZE, TGT_VOCAB_SIZE, PAD_IDX,
                     FFN_HID_DIM, DROPOUT, POS_LN, DEVICE)
 
+    print(f'The model has {count_parameters(transformer):,} trainable parameters')
     transformer = transformer.to(device)
 
     # lrate = lambda step_num: EMB_SIZE**-0.5 * np.minimum(step_num**-0.5,step_num*warmup_steps**-1.5)
